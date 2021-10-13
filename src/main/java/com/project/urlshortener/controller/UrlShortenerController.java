@@ -1,7 +1,17 @@
 package com.project.urlshortener.controller;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.urlshortener.dto.UrlShortenerDto;
+import com.project.urlshortener.exception.InvalidUrlException;
+import com.project.urlshortener.service.UrlShortenerService;
 
 /**
  * @author mayurpatil
@@ -21,36 +33,36 @@ public class UrlShortenerController {
 
 	private static final Logger logger = LogManager.getLogger(UrlShortenerController.class);
 
-	/**
-	 * Returns a short url.
-	 * 
-	 * @param urlShortenerDto
-	 * @return
-	 * 
-	 */
+	@Autowired
+	private UrlShortenerService urlShortenerService;
+
+	@Autowired
+	private HttpServletRequest httpServletRequest;
+
 	@PostMapping
-	public String storeShortUrl(@RequestBody UrlShortenerDto urlShortenerDto) {
+	public Map<String, String> storeShortUrl(@RequestBody UrlShortenerDto urlShortenerDto) {
 
 		if (logger.isInfoEnabled())
 			logger.info("Action: {} ", "Store short URL request recieved.");
+		
+		UrlValidator validator = new UrlValidator(new String[] { "http", "https" });
+		if (!validator.isValid(urlShortenerDto.getLongUrl())) {
+			throw new InvalidUrlException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Invalid url.");
+		}
 
-		return "short URL for service";
+		return Collections.singletonMap("redirectUrl", httpServletRequest.getRequestURL()
+				.toString() + "/" + urlShortenerService.convertToShortUrl(urlShortenerDto));
 
 	}
 
-	/**
-	 * Returns a original url.
-	 * 
-	 * @param shortUrl
-	 * @return
-	 */
 	@GetMapping(value = "{shortUrl}")
-	public String get(@PathVariable String shortUrl) {
+	public ResponseEntity<String> get(@PathVariable String shortUrl) {
 
 		if (logger.isInfoEnabled())
 			logger.info("Action: {} ", "Redirecting original url from short url.");
 
-		return "return original url and redirect";
+		String url = urlShortenerService.getLongUrl(shortUrl);
+		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(url)).build();
 	}
 
 }

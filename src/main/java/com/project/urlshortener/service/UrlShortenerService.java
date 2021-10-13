@@ -13,7 +13,7 @@ public interface UrlShortenerService {
 	 * 
 	 * @param urlShortenerDto
 	 */
-	public void addUrl(UrlShortenerDto urlShortenerDto);
+	public void storeUrl(UrlShortenerDto urlShortenerDto);
 
 	/**
 	 * Method to check if short url is present.
@@ -30,7 +30,7 @@ public interface UrlShortenerService {
 	 * @return
 	 */
 
-	public String convertToShortUrl(UrlShortenerDto urldto);
+	public String convertToShortUrl(UrlShortenerDto urlShortenerDto);
 
 	/**
 	 * Method to get long url.
@@ -38,6 +38,6 @@ public interface UrlShortenerService {
 	 * @param shortUrl
 	 * @return
 	 */
-	public UrlShortenerDto getLongUrl(String shortUrl);
+	public String getLongUrl(String shortUrl);
 
 }
