@@ -9,8 +9,8 @@
 
 ### With Docker :
 
-- docker pull mayurvpatil/url-shortener:1.0.0
-- docker run -p 8080:8080 mayurvpatil/url-shortener:1.0.0
+- ```docker pull mayurvpatil/url-shortener:2.0.0```
+- ```docker run -p 8080:8080 mayurvpatil/url-shortener:2.0.0```
 
 [DockerHub image link](https://hub.docker.com/repository/docker/mayurvpatil/url-shortener)
 

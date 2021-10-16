@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
@@ -21,6 +22,7 @@ import com.project.urlshortener.service.UrlShortenerService;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc(addFilters = false)
+@SpringBootTest(properties = { "storage.file.path=/tmp/storage.txt" })
 public class UrlShortenerControllerTest extends AbstractControllerTest {
 
 	@MockBean

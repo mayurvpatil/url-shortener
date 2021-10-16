@@ -8,8 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.project.urlshortener.dto.UrlShortenerDto;
 import com.project.urlshortener.exception.InvalidUrlException;
@@ -20,16 +23,22 @@ import com.project.urlshortener.service.impl.UrlShortenerServiceImpl;
  */
 
 @RunWith(MockitoJUnitRunner.class)
+@AutoConfigureMockMvc(addFilters = false)
+@SpringBootTest(properties = { "storage.file.path=/tmp/storage.txt" })
 public class UrlShortenerServiceTest {
 
 	@InjectMocks
 	private UrlShortenerService urlShortenerService = new UrlShortenerServiceImpl();
+
+	@Mock
+	private StorageService storageService;
 
 	private UrlShortenerDto urlShortenerDto;
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
+		storageService = new StorageService();
 		urlShortenerDto = new UrlShortenerDto();
 		urlShortenerDto.setLongUrl("https://google.com");
 	}
@@ -38,21 +47,21 @@ public class UrlShortenerServiceTest {
 	public void convertToShortUrl() {
 		String shortenerUrl = urlShortenerService.convertToShortUrl(urlShortenerDto);
 		assertTrue(!shortenerUrl.isEmpty());
-		Memory.getInstance().memory.clear();
+		storageService.memory.clear();
 	}
 
 	@Test
 	public void storeUrl() {
 		urlShortenerService.storeUrl(urlShortenerDto);
-		assert (Memory.getInstance().memory.size() > 0);
-		Memory.getInstance().memory.clear();
+		assert (storageService.memory.size() > 0);
+		storageService.memory.clear();
 	}
 
 	@Test
 	public void isShortUrlPresent() {
 		String shortUlr = urlShortenerService.convertToShortUrl(urlShortenerDto);
 		assertTrue(urlShortenerService.isShortUrlPresent(shortUlr));
-		Memory.getInstance().memory.clear();
+		storageService.memory.clear();
 	}
 
 	@Test
@@ -61,7 +70,7 @@ public class UrlShortenerServiceTest {
 		String longUrl = urlShortenerService.getLongUrl(shortUlr);
 		assertEquals(longUrl, urlShortenerDto.getLongUrl());
 
-		Memory.getInstance().memory.clear();
+		storageService.memory.clear();
 
 	}
 
