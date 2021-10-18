@@ -10,7 +10,7 @@
 ### With Docker :
 
 - ```docker pull mayurvpatil/url-shortener:2.0.0```
-- ```docker run -p 8080:8080 mayurvpatil/url-shortener:2.0.0```
+- ```docker run -it -d  -v <Absoute_path_to_ay_host_dorectory>:/storage -p 8080:8080 mayurvpatil/url-shortener:2.0.0```
 
 [DockerHub image link](https://hub.docker.com/repository/docker/mayurvpatil/url-shortener)
 
